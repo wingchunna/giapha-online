@@ -1,7 +1,7 @@
 const getTokenFromHeader = require("../utils/getTokenFromHeader");
 const verifyToken = require("../utils/verifyToken");
 const globalErrHandler = require("../middlewares/globalErrHandler");
-const User = require("../model/user");
+const User = require("../models/user");
 const { appError } = require("../middlewares/appError");
 
 const isAdmin = async (req, res, next) => {

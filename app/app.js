@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 
 // import routes
 
-const userRoutes = require("../routes/userRoute");
+const userRoutes = require("../routes/userRoutes");
 const postRoutes = require("../routes/postRoutes");
 const peopleRoutes = require("../routes/peopleRoutes");
 const generationRoutes = require("../routes/generationRoutes");

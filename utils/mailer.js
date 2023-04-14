@@ -1,5 +1,5 @@
 const nodeMailer = require("nodemailer");
-const mailConfig = require("../Config/mailConfig");
+const mailConfig = require("../configs/mailConfig");
 require("dotenv").config;
 
 exports.sendMail = (to, subject, htmlContent) => {

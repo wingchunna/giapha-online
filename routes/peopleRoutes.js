@@ -5,9 +5,9 @@ const {
   getPeopleByIdCtrl,
   updatePeopleCtrl,
   deletePeopleCtrl,
-} = require("../../controller/peopleController");
-const isLogin = require("../../middlewares/isLogin");
-const isAdmin = require("../../middlewares/isAdmin");
+} = require("../controllers/peopleControllers");
+const isLogin = require("../middlewares/isLogin");
+const isAdmin = require("../middlewares/isAdmin");
 
 const peopleRoutes = express.Router();
 

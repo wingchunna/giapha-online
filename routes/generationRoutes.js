@@ -5,9 +5,9 @@ const {
   getGenByIdCtrl,
   updateGenCtrl,
   deleteGenCtrl,
-} = require("../../controller/genController");
-const isLogin = require("../../middlewares/isLogin");
-const isAdmin = require("../../middlewares/isAdmin");
+} = require("../controllers/generationControllers");
+const isLogin = require("../middlewares/isLogin");
+const isAdmin = require("../middlewares/isAdmin");
 
 const genRoutes = express.Router();
 

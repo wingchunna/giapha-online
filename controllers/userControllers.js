@@ -1,9 +1,9 @@
-const User = require("../../model/user");
-const { hashPassword, comparePassword } = require("../../utils/hashPassword");
-const { appError, notFound } = require("../../middlewares/appError");
-const generateToken = require("../../utils/generateToken");
+const User = require("../models/user");
+const { hashPassword, comparePassword } = require("../utils/hashPassword");
+const { appError, notFound } = require("../middlewares/appError");
+const generateToken = require("../utils/generateToken");
 const bcrypt = require("bcryptjs");
-const mailer = require("../../utils/mailer");
+const mailer = require("../utils/mailer");
 
 //@desc Register User
 //@route POST /api/v1/users/register
@@ -368,7 +368,7 @@ module.exports = {
   updateUserCtrl,
   deleteUserCtrl,
   getUserProfileCtrl,
-  updateShippingAddressCtrl,
+
   uploadPhotoProfileCtrl,
   updatePasswordUserCtrl,
   blockUserCtrl,

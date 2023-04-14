@@ -5,10 +5,10 @@ const {
   getPostByIdCtrl,
   updatePostCtrl,
   deletePostCtrl,
-} = require("../../controller/postController");
-const isLogin = require("../../middlewares/isLogin");
-const isAdmin = require("../../middlewares/isAdmin");
-const storage = require("../../config/upload-post-images");
+} = require("../controllers/postControllers");
+const isLogin = require("../middlewares/isLogin");
+const isAdmin = require("../middlewares/isAdmin");
+const storage = require("../configs/upload-post-images");
 const multer = require("multer");
 const upload = multer({ storage });
 const postRoutes = express.Router();
@@ -31,7 +31,7 @@ postRoutes.put(
   isLogin,
   isAdmin,
   upload.single("image"),
-  updatepostCtrl
+  updatePostCtrl
 );
 
 module.exports = postRoutes;

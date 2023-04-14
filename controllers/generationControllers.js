@@ -1,5 +1,5 @@
-const Post = require("../../model/post");
-const { appError, notFound } = require("../../middlewares/appError");
+const Post = require("../models/post");
+const { appError, notFound } = require("../middlewares/appError");
 const moment = require("moment");
 //@desc Register Post
 //@route POST /api/v1/Posts/register
@@ -18,8 +18,11 @@ const addPostCtrl = async (req, res, next) => {
       //create Post
 
       const Post = await Post.create({
-        title, content, image, category
-        author: req.userAuth,
+        title,
+        content,
+        image,
+        category,
+        // author: req.userAuth,
       });
       // push Product to Post
       // send response
@@ -35,7 +38,6 @@ const addPostCtrl = async (req, res, next) => {
     return next(appError(error.message, 500));
   }
 };
-
 
 //@desc Get Post by name
 //@route GET /api/v1/Posts/
@@ -89,13 +91,16 @@ const updatePostCtrl = async (req, res, next) => {
       if (!postFound) {
         return next(appError("Post không tồn tại", 403));
       }
-      
+
       //create Post
-      
+
       const Post = await Post.findByIdAndUpdate(
         req.params.id,
         {
-            title, content, image, category
+          title,
+          content,
+          image,
+          category,
         },
         {
           new: true,

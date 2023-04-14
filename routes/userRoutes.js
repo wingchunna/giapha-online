@@ -16,10 +16,12 @@ const {
   adminDashboardCtrl,
 
   userLogoutCtrl,
-} = require("../../Controller/User/userController");
-const isLogin = require("../../middlewares/isLogin");
-const isAdmin = require("../../middlewares/isSuperAdmin");
-const storage = require("../../config/upload-profile-images");
+} = require("../controllers/userControllers");
+const isLogin = require("../middlewares/isLogin");
+const isSuperAdmin = require("../middlewares/isSuperAdmin");
+const isAdmin = require("../middlewares/isAdmin");
+
+const storage = require("../configs/upload-profile-images");
 const multer = require("multer");
 const upload = multer({ storage });
 

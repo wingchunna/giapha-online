@@ -1,5 +1,5 @@
-const People = require("../../model/people");
-const { appError, notFound } = require("../../middlewares/appError");
+const People = require("../models/people");
+const { appError, notFound } = require("../middlewares/appError");
 const moment = require("moment");
 //@desc Register People
 //@route People /api/v1/Peoples/register
@@ -8,31 +8,32 @@ const moment = require("moment");
 const addPeopleCtrl = async (req, res, next) => {
   //check People exits
   try {
-    let { firstName,
-        lastName, 
-        commonName, 
-        calledName, 
-        otherName, 
-        dob, 
-        dod,
-       gender,
-        address, 
-        currentAddr, 
-        alive, 
-        dad, 
-        mother, 
-        son, 
-        daughter, 
-        husband, 
-        wife,
-        generation,
-        branch, 
-        certificate, 
-        education,
-        job,
-        restingPlace
-       } = req.body;
-    if (firstName && lastName ) {
+    let {
+      firstName,
+      lastName,
+      commonName,
+      calledName,
+      otherName,
+      dob,
+      dod,
+      gender,
+      address,
+      currentAddr,
+      alive,
+      dad,
+      mother,
+      son,
+      daughter,
+      husband,
+      wife,
+      generation,
+      branch,
+      certificate,
+      education,
+      job,
+      restingPlace,
+    } = req.body;
+    if (firstName && lastName) {
       const PeopleFound = await People.findOne({ title });
       if (PeopleFound) {
         return next(appError("People đã tồn tại", 403));
@@ -41,8 +42,11 @@ const addPeopleCtrl = async (req, res, next) => {
       //create People
 
       const People = await People.create({
-        title, content, image, category
-        author: req.userAuth,
+        title,
+        content,
+        image,
+        category,
+        // author: req.userAuth,
       });
       // push Product to People
       // send response
@@ -58,7 +62,6 @@ const addPeopleCtrl = async (req, res, next) => {
     return next(appError(error.message, 500));
   }
 };
-
 
 //@desc Get People by name
 //@route GET /api/v1/Peoples/
@@ -112,13 +115,16 @@ const updatePeopleCtrl = async (req, res, next) => {
       if (!PeopleFound) {
         return next(appError("People không tồn tại", 403));
       }
-      
+
       //create People
-      
+
       const People = await People.findByIdAndUpdate(
         req.params.id,
         {
-            title, content, image, category
+          title,
+          content,
+          image,
+          category,
         },
         {
           new: true,
