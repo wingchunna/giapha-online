@@ -65,6 +65,6 @@ userRoutes.put("/block-user/:id", isLogin, isSuperAdmin, blockUserCtrl);
 userRoutes.put("/unblock-user/:id", isLogin, isSuperAdmin, unblockUserCtrl);
 
 //GET /Admin unblock user
-userRoutes.get("/admins/dashboard", isLogin, isSuperAdmin, adminDashboardCtrl);
+userRoutes.get("/admins/dashboard", isLogin, isAdmin, adminDashboardCtrl);
 
 module.exports = userRoutes;
