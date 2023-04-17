@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const Category = require("../models/category");
 const { appError, notFound } = require("../middlewares/appError");
 const moment = require("moment");
 //@desc Register Post
@@ -58,6 +59,26 @@ const getAllPostCtrl = async (req, res, next) => {
   }
 };
 
+//@desc Get Image by category
+//@route GET /api/v1/Images/
+//@access Private/Admin
+
+const getPostsByCategoryCtrl = async (req, res, next) => {
+  try {
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      next(appError("Không tìm thấy danh mục !", 403));
+    }
+    res.status(201).json({
+      data: category.posts,
+      status: "success",
+      message: "Tìm kiếm danh sách bài viết theo danh mục thành công !",
+    });
+  } catch (error) {
+    return next(appError(error.message, 500));
+  }
+};
+
 //@desc Get Post By Id
 //@route GET /api/v1/Posts/:id
 //@access Private/Admin
@@ -85,14 +106,12 @@ const getPostByIdCtrl = async (req, res, next) => {
 const updatePostCtrl = async (req, res, next) => {
   try {
     let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
+    if (title || content || image || category) {
       const postFound = await Post.findOne({ code });
       if (!postFound) {
         return next(appError("Post không tồn tại", 403));
       }
-
       //create Post
-
       const Post = await Post.findByIdAndUpdate(
         req.params.id,
         {
@@ -140,4 +159,5 @@ module.exports = {
   getPostByIdCtrl,
   updatePostCtrl,
   deletePostCtrl,
+  getPostsByCategoryCtrl,
 };

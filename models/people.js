@@ -18,6 +18,10 @@ const peopleSchema = new Schema(
     phone: {
       type: String,
     },
+    avatar: {
+      type: String,
+      default: "https://img.freepik.com/free-icon/man_318-188888.jpg",
+    },
     commonName: {
       type: String,
     },
@@ -43,10 +47,7 @@ const peopleSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    isMarried: {
-      type: Boolean,
-      default: false,
-    },
+
     address: {
       type: String,
     },

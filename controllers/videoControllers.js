@@ -1,101 +1,128 @@
-const Post = require("../../model/post");
+const Video = require("../../model/video");
+const Category = require("../../model/category");
 const { appError, notFound } = require("../../middlewares/appError");
 const moment = require("moment");
-//@desc Register Post
-//@route POST /api/v1/Posts/register
+//@desc Register Video
+//@route Video /api/v1/Videos/register
 //@access Private/Admin
 
-const addPostCtrl = async (req, res, next) => {
-  //check Post exits
+const addVideoCtrl = async (req, res, next) => {
+  //check Video exits
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ title });
-      if (postFound) {
-        return next(appError("Post đã tồn tại", 403));
+    let { title, description, url, category } = req.body;
+    if (title && description && category && url) {
+      const videoFound = await Video.findOne({ title });
+      if (videoFound) {
+        return next(appError("Video đã tồn tại", 403));
       }
-
-      //create Post
-
-      const Post = await Post.create({
-        title, content, image, category
+      //create Video
+      const Video = await Video.create({
+        title,
+        description,
+        avatarImage: req?.file?.path,
+        url,
+        category,
         author: req.userAuth,
       });
-      // push Product to Post
+
       // send response
       res.status(201).json({
-        data: Post,
+        data: video,
         status: "success",
-        message: "Thêm mới Post thành công !",
+        message: "Thêm mới Video thành công !",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết", 403));
+      return next(appError("Bạn cần nhập đầy đủ thông tin Video", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-
-//@desc Get Post by name
-//@route GET /api/v1/Posts/
+//@desc Get Video by name
+//@route GET /api/v1/Videos/
 //@access Private/Admin
 
-const getAllPostCtrl = async (req, res, next) => {
+const getAllVideoCtrl = async (req, res, next) => {
   try {
-    const posts = await Post.find();
-    if (!posts) {
-      return next(appError("Không tìm thấy danh sách bài viết", 403));
+    const videos = await Video.find();
+    if (!videos) {
+      return next(appError("Không tìm thấy danh sách Video", 403));
     }
     res.status(201).json({
-      Posts,
+      Videos,
       status: "success",
-      message: "Tìm kiếm danh sách bài viết thành công !",
+      message: "Tìm kiếm danh sách video thành công !",
     });
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-//@desc Get Post By Id
-//@route GET /api/v1/Posts/:id
+//@desc Get Image by category
+//@route GET /api/v1/Images/
 //@access Private/Admin
 
-const getPostByIdCtrl = async (req, res, next) => {
+const getVideosByCategoryCtrl = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      next(appError("Không tìm thấy bài viết !", 403));
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      next(appError("Không tìm thấy danh mục !", 403));
     }
     res.status(201).json({
-      Post,
+      data: category.videos,
       status: "success",
-      message: "Tìm kiếm bài viết thành công !",
+      message: "Tìm kiếm danh sách video theo danh mục thành công !",
+    });
+  } catch (error) {
+    return next(appError(error.message, 500));
+  }
+};
+
+//@desc Get Video By Id
+//@route GET /api/v1/Videos/:id
+//@access Private/Admin
+
+const getVideoByIdCtrl = async (req, res, next) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) {
+      next(appError("Không tìm thấy Video !", 403));
+    }
+    res.status(201).json({
+      video,
+      status: "success",
+      message: "Tìm kiếm Video thành công !",
     });
   } catch (error) {
     next(appError(error.message, 500));
   }
 };
 
-//@desc Update Post
-//@route PUT /api/v1/Posts/:id
+//@desc Update Video
+//@route PUT /api/v1/Videos/:id
 //@access Private/Admin
 
-const updatePostCtrl = async (req, res, next) => {
+const updateVideoCtrl = async (req, res, next) => {
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ code });
-      if (!postFound) {
-        return next(appError("Post không tồn tại", 403));
+    let { title, description, url, category } = req.body;
+    if (title || description || url || category) {
+      const videoFound = await Video.findOne({ title });
+      if (!videoFound) {
+        return next(appError("Video không tồn tại", 403));
       }
-      
-      //create Post
-      
-      const Post = await Post.findByIdAndUpdate(
+
+      //create Video
+
+      const video = await Video.findByIdAndUpdate(
         req.params.id,
         {
-            title, content, image, category
+          title,
+          description,
+          avatarImage: req?.file?.path,
+          url,
+          category,
+          author: req.userAuth,
         },
         {
           new: true,
@@ -103,26 +130,26 @@ const updatePostCtrl = async (req, res, next) => {
         }
       );
       res.status(201).json({
-        message: "Cập nhật bài viết thành công !",
+        message: "Cập nhật Video thành công !",
         status: "success",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết !", 403));
+      return next(appError("Bạn cần nhập đầy đủ thông tin Video !", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-//@desc Delete Post
-//@route delete /api/v1/Posts/:id
+//@desc Delete Video
+//@route delete /api/v1/Videos/:id
 //@access Private/Admin
 
-const deletePostCtrl = async (req, res, next) => {
+const deleteVideoCtrl = async (req, res, next) => {
   try {
-    const post = await Post.findByIdAndDelete(req.params.id);
+    const video = await Video.findByIdAndDelete(req.params.id);
     res.status(201).json({
-      message: "Xóa bài viết thành công !",
+      message: "Xóa Video thành công !",
       status: "success",
     });
   } catch (error) {
@@ -131,9 +158,9 @@ const deletePostCtrl = async (req, res, next) => {
 };
 
 module.exports = {
-  addPostCtrl,
-  getAllPostCtrl,
-  getPostByIdCtrl,
-  updatePostCtrl,
-  deletePostCtrl,
+  addVideoCtrl,
+  getAllVideoCtrl,
+  getVideoByIdCtrl,
+  updateVideoCtrl,
+  deleteVideoCtrl,
 };

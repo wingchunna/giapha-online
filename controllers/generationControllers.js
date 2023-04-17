@@ -1,106 +1,98 @@
-const Post = require("../models/post");
+const Generation = require("../models/Generation");
 const { appError, notFound } = require("../middlewares/appError");
 const moment = require("moment");
-//@desc Register Post
-//@route POST /api/v1/Posts/register
+//@desc Register Generation
+//@route Generation /api/v1/Generations/register
 //@access Private/Admin
 
-const addPostCtrl = async (req, res, next) => {
-  //check Post exits
+const addGenerationCtrl = async (req, res, next) => {
+  //check Generation exits
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ title });
-      if (postFound) {
-        return next(appError("Post đã tồn tại", 403));
+    let { gen } = req.body;
+    if (gen) {
+      const generationFound = await Generation.findOne({ gen });
+      if (generationFound) {
+        return next(appError("Đời họ đã tồn tại", 403));
       }
-
-      //create Post
-
-      const Post = await Post.create({
-        title,
-        content,
-        image,
-        category,
+      //create Generation
+      const generation = await Generation.create({
+        gen,
         // author: req.userAuth,
       });
-      // push Product to Post
+
       // send response
       res.status(201).json({
-        data: Post,
+        data: generation,
         status: "success",
-        message: "Thêm mới Post thành công !",
+        message: "Thêm mới đời họ thành công !",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết", 403));
+      return next(appError("Bạn cần nhập đầy đủ thông tin đời họ !", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-//@desc Get Post by name
-//@route GET /api/v1/Posts/
+//@desc Get Generation by name
+//@route GET /api/v1/Generations/
 //@access Private/Admin
 
-const getAllPostCtrl = async (req, res, next) => {
+const getAllGenerationCtrl = async (req, res, next) => {
   try {
-    const posts = await Post.find();
-    if (!posts) {
-      return next(appError("Không tìm thấy danh sách bài viết", 403));
+    const generations = await Generation.find();
+    if (!generations) {
+      return next(appError("Không tìm thấy danh sách đời họ", 403));
     }
     res.status(201).json({
-      Posts,
+      generations,
       status: "success",
-      message: "Tìm kiếm danh sách bài viết thành công !",
+      message: "Tìm kiếm danh sách đời họ thành công !",
     });
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-//@desc Get Post By Id
-//@route GET /api/v1/Posts/:id
+//@desc Get Generation By Id
+//@route GET /api/v1/Generations/:id
 //@access Private/Admin
 
-const getPostByIdCtrl = async (req, res, next) => {
+const getGenerationByIdCtrl = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      next(appError("Không tìm thấy bài viết !", 403));
+    const generation = await Generation.findById(req.params.id);
+    if (!generation) {
+      next(appError("Không tìm thấy đời họ !", 403));
     }
     res.status(201).json({
-      Post,
+      generation,
       status: "success",
-      message: "Tìm kiếm bài viết thành công !",
+      message: "Tìm kiếm đời họ thành công !",
     });
   } catch (error) {
     next(appError(error.message, 500));
   }
 };
 
-//@desc Update Post
-//@route PUT /api/v1/Posts/:id
+//@desc Update Generation
+//@route PUT /api/v1/Generations/:id
 //@access Private/Admin
 
-const updatePostCtrl = async (req, res, next) => {
+const updateGenerationCtrl = async (req, res, next) => {
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ code });
-      if (!postFound) {
-        return next(appError("Post không tồn tại", 403));
+    let { gen } = req.body;
+    if (gen) {
+      const generationFound = await Generation.findOne({ gen });
+      if (!generationFound) {
+        return next(appError("Đời họ không tồn tại", 403));
       }
 
-      //create Post
+      //create Generation
 
-      const Post = await Post.findByIdAndUpdate(
+      const generation = await Generation.findByIdAndUpdate(
         req.params.id,
         {
-          title,
-          content,
-          image,
-          category,
+          gen,
         },
         {
           new: true,
@@ -108,26 +100,26 @@ const updatePostCtrl = async (req, res, next) => {
         }
       );
       res.status(201).json({
-        message: "Cập nhật bài viết thành công !",
+        message: "Cập nhật đời họ thành công !",
         status: "success",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết !", 403));
+      return next(appError("Bạn cần nhập đầy đủ thông tin đời họ !", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-//@desc Delete Post
-//@route delete /api/v1/Posts/:id
+//@desc Delete Generation
+//@route delete /api/v1/Generations/:id
 //@access Private/Admin
 
-const deletePostCtrl = async (req, res, next) => {
+const deleteGenerationCtrl = async (req, res, next) => {
   try {
-    const post = await Post.findByIdAndDelete(req.params.id);
+    const generation = await Generation.findByIdAndDelete(req.params.id);
     res.status(201).json({
-      message: "Xóa bài viết thành công !",
+      message: "Xóa đời họ thành công !",
       status: "success",
     });
   } catch (error) {
@@ -136,9 +128,9 @@ const deletePostCtrl = async (req, res, next) => {
 };
 
 module.exports = {
-  addPostCtrl,
-  getAllPostCtrl,
-  getPostByIdCtrl,
-  updatePostCtrl,
-  deletePostCtrl,
+  addGenerationCtrl,
+  getAllGenerationCtrl,
+  getGenerationByIdCtrl,
+  updateGenerationCtrl,
+  deleteGenerationCtrl,
 };

@@ -5,6 +5,7 @@ const {
   getPostByIdCtrl,
   updatePostCtrl,
   deletePostCtrl,
+  getPostsByCategoryCtrl,
 } = require("../controllers/postControllers");
 const isLogin = require("../middlewares/isLogin");
 const isAdmin = require("../middlewares/isAdmin");
@@ -17,10 +18,13 @@ const postRoutes = express.Router();
 postRoutes.post("/", isLogin, isAdmin, upload.single("image"), addPostCtrl);
 
 //GET/post/
-postRoutes.get("/", getAllPostCtrl);
+postRoutes.get("/", isLogin, isAdmin, getAllPostCtrl);
 
 //GET/post/:id
 postRoutes.get("/:id", getPostByIdCtrl);
+
+//GET/post/:category_id
+postRoutes.get("/category/:id", getPostsByCategoryCtrl);
 
 //DELETE/post/
 postRoutes.delete("/:id", isLogin, isAdmin, deletePostCtrl);

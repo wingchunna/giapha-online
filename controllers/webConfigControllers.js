@@ -1,128 +1,101 @@
-const Post = require("../../model/post");
+const WebConfig = require("../../model/webConfig");
 const { appError, notFound } = require("../../middlewares/appError");
 const moment = require("moment");
-//@desc Register Post
-//@route POST /api/v1/Posts/register
+//@desc Register WebConfig
+//@route WebConfig /api/v1/WebConfigs/register
 //@access Private/Admin
 
-const addPostCtrl = async (req, res, next) => {
-  //check Post exits
+const addWebConfigCtrl = async (req, res, next) => {
+  //check WebConfig exits
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ title });
-      if (postFound) {
-        return next(appError("Post đã tồn tại", 403));
+    let { title, logo, hotline, address, email, leader, siteManager } =
+      req.body;
+    if (title && logo && hotline && address && email && leader && siteManager) {
+      const webConfigFound = await WebConfig.find();
+      if (webConfigFound) {
+        return next(appError("WebConfig đã tồn tại", 403));
       }
 
-      //create Post
+      //create WebConfig
 
-      const Post = await Post.create({
-        title, content, image, category
+      const webConfig = await WebConfig.create({
+        title,
+        logo: req?.file?.path,
+        hotline,
+        address,
+        email,
+        leader,
+        siteManager,
         author: req.userAuth,
       });
-      // push Product to Post
+
       // send response
       res.status(201).json({
-        data: Post,
+        data: webConfig,
         status: "success",
-        message: "Thêm mới Post thành công !",
+        message: "Thêm mới WebConfig thành công !",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết", 403));
+      return next(appError("Bạn cần nhập thông tin Webconfig", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
   }
 };
 
-
-//@desc Get Post by name
-//@route GET /api/v1/Posts/
+//@desc Get WebConfig By Id
+//@route GET /api/v1/WebConfigs/:id
 //@access Private/Admin
 
-const getAllPostCtrl = async (req, res, next) => {
+const getWebConfigCtrl = async (req, res, next) => {
   try {
-    const posts = await Post.find();
-    if (!posts) {
-      return next(appError("Không tìm thấy danh sách bài viết", 403));
+    const WebConfig = await WebConfig.find();
+    if (!webConfig) {
+      next(appError("Không tìm thấy webconfig !", 403));
     }
     res.status(201).json({
-      Posts,
+      webConfig,
       status: "success",
-      message: "Tìm kiếm danh sách bài viết thành công !",
-    });
-  } catch (error) {
-    return next(appError(error.message, 500));
-  }
-};
-
-//@desc Get Post By Id
-//@route GET /api/v1/Posts/:id
-//@access Private/Admin
-
-const getPostByIdCtrl = async (req, res, next) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      next(appError("Không tìm thấy bài viết !", 403));
-    }
-    res.status(201).json({
-      Post,
-      status: "success",
-      message: "Tìm kiếm bài viết thành công !",
+      message: "Tìm kiếm webconfig thành công !",
     });
   } catch (error) {
     next(appError(error.message, 500));
   }
 };
 
-//@desc Update Post
-//@route PUT /api/v1/Posts/:id
+//@desc Update WebConfig
+//@route PUT /api/v1/WebConfigs/:id
 //@access Private/Admin
 
-const updatePostCtrl = async (req, res, next) => {
+const updateWebConfigCtrl = async (req, res, next) => {
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const postFound = await Post.findOne({ code });
-      if (!postFound) {
-        return next(appError("Post không tồn tại", 403));
-      }
-      
-      //create Post
-      
-      const Post = await Post.findByIdAndUpdate(
-        req.params.id,
-        {
-            title, content, image, category
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-      res.status(201).json({
-        message: "Cập nhật bài viết thành công !",
-        status: "success",
-      });
-    } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết !", 403));
+    let { title, logo, hotline, address, email, leader, siteManager } =
+      req.body;
+
+    const webConfigFound = await WebConfig.find();
+    if (!webConfigFound) {
+      return next(appError("WebConfig không tồn tại", 403));
     }
-  } catch (error) {
-    return next(appError(error.message, 500));
-  }
-};
 
-//@desc Delete Post
-//@route delete /api/v1/Posts/:id
-//@access Private/Admin
+    //create WebConfig
 
-const deletePostCtrl = async (req, res, next) => {
-  try {
-    const post = await Post.findByIdAndDelete(req.params.id);
+    await WebConfig.findOneAndUpdate(
+      {
+        title,
+        logo: req?.file?.path,
+        hotline,
+        address,
+        email,
+        leader,
+        siteManager,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     res.status(201).json({
-      message: "Xóa bài viết thành công !",
+      message: "Cập nhật webconfig thành công !",
       status: "success",
     });
   } catch (error) {
@@ -131,9 +104,7 @@ const deletePostCtrl = async (req, res, next) => {
 };
 
 module.exports = {
-  addPostCtrl,
-  getAllPostCtrl,
-  getPostByIdCtrl,
-  updatePostCtrl,
-  deletePostCtrl,
+  addWebConfigCtrl,
+  getWebConfigCtrl,
+  updateWebConfigCtrl,
 };

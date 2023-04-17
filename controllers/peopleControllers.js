@@ -14,12 +14,17 @@ const addPeopleCtrl = async (req, res, next) => {
       commonName,
       calledName,
       otherName,
-      dob,
-      dod,
+      dateOfBirth,
+      dateOfBirthLunar,
+      dateOfDead,
+      dateOfDeadLunar,
       gender,
       address,
       currentAddr,
-      alive,
+      email,
+      phone,
+      patrons,
+      isDead,
       dad,
       mother,
       son,
@@ -30,33 +35,62 @@ const addPeopleCtrl = async (req, res, next) => {
       branch,
       certificate,
       education,
-      job,
+      jobTitle,
+      workingAddress,
       restingPlace,
     } = req.body;
     if (firstName && lastName) {
-      const PeopleFound = await People.findOne({ title });
-      if (PeopleFound) {
-        return next(appError("People đã tồn tại", 403));
+      const fullName = firstName + " " + lastName;
+      const peopleFound = await People.findOne({ fullName });
+      if (peopleFound) {
+        if (peopleFound.dateOfBirth === dateOfBirth) {
+          return next(appError("Phả nhân đã tồn tại !", 403));
+        }
       }
 
       //create People
 
-      const People = await People.create({
-        title,
-        content,
-        image,
-        category,
-        // author: req.userAuth,
+      const people = await People.create({
+        firstName,
+        lastName,
+        commonName,
+        calledName,
+        otherName,
+        dateOfBirth,
+        dateOfBirthLunar,
+        dateOfDead,
+        dateOfDeadLunar,
+        gender,
+        address,
+        currentAddr,
+        email,
+        phone,
+        avatar: req?.file?.path,
+        patrons,
+        isDead,
+        dad,
+        mother,
+        son,
+        daughter,
+        husband,
+        wife,
+        generation,
+        branch,
+        certificate,
+        education,
+        jobTitle,
+        workingAddress,
+        restingPlace,
       });
-      // push Product to People
+      // push people to People
       // send response
       res.status(201).json({
         data: People,
         status: "success",
-        message: "Thêm mới People thành công !",
+        message: "Thêm mới phả nhân thành công !",
       });
     } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết", 403));
+      return next(appError("Bạn cần nhập đầy đủ thông tin phả nhân !", 403));
     }
   } catch (error) {
     return next(appError(error.message, 500));
@@ -69,14 +103,14 @@ const addPeopleCtrl = async (req, res, next) => {
 
 const getAllPeopleCtrl = async (req, res, next) => {
   try {
-    const Peoples = await People.find();
-    if (!Peoples) {
-      return next(appError("Không tìm thấy danh sách bài viết", 403));
+    const peoples = await People.find();
+    if (!peoples) {
+      return next(appError("Không tìm thấy danh sách phả nhân", 403));
     }
     res.status(201).json({
-      Peoples,
+      peoples,
       status: "success",
-      message: "Tìm kiếm danh sách bài viết thành công !",
+      message: "Tìm kiếm danh sách phả nhân thành công !",
     });
   } catch (error) {
     return next(appError(error.message, 500));
@@ -89,14 +123,14 @@ const getAllPeopleCtrl = async (req, res, next) => {
 
 const getPeopleByIdCtrl = async (req, res, next) => {
   try {
-    const People = await People.findById(req.params.id);
-    if (!People) {
-      next(appError("Không tìm thấy bài viết !", 403));
+    const people = await People.findById(req.params.id);
+    if (!people) {
+      next(appError("Không tìm thấy phả nhân !", 403));
     }
     res.status(201).json({
-      People,
+      people,
       status: "success",
-      message: "Tìm kiếm bài viết thành công !",
+      message: "Tìm kiếm phả nhân thành công !",
     });
   } catch (error) {
     next(appError(error.message, 500));
@@ -109,35 +143,83 @@ const getPeopleByIdCtrl = async (req, res, next) => {
 
 const updatePeopleCtrl = async (req, res, next) => {
   try {
-    let { title, content, image, category } = req.body;
-    if (title && content && image && category) {
-      const PeopleFound = await People.findOne({ code });
-      if (!PeopleFound) {
-        return next(appError("People không tồn tại", 403));
+    let {
+      firstName,
+      lastName,
+      commonName,
+      calledName,
+      otherName,
+      dateOfBirth,
+      dateOfBirthLunar,
+      dateOfDead,
+      dateOfDeadLunar,
+      gender,
+      address,
+      currentAddr,
+      email,
+      phone,
+      patrons,
+      isDead,
+      dad,
+      mother,
+      son,
+      daughter,
+      husband,
+      wife,
+      generation,
+      branch,
+      certificate,
+      education,
+      jobTitle,
+      workingAddress,
+      restingPlace,
+    } = req.body;
+
+    //create People
+
+    const People = await People.findByIdAndUpdate(
+      req.params.id,
+      {
+        firstName,
+        lastName,
+        commonName,
+        calledName,
+        otherName,
+        dateOfBirth,
+        dateOfBirthLunar,
+        dateOfDead,
+        dateOfDeadLunar,
+        gender,
+        address,
+        currentAddr,
+        email,
+        phone,
+        avatar: req?.file?.path,
+        patrons,
+        isDead,
+        dad,
+        mother,
+        son,
+        daughter,
+        husband,
+        wife,
+        generation,
+        branch,
+        certificate,
+        education,
+        jobTitle,
+        workingAddress,
+        restingPlace,
+      },
+      {
+        new: true,
+        runValidators: true,
       }
-
-      //create People
-
-      const People = await People.findByIdAndUpdate(
-        req.params.id,
-        {
-          title,
-          content,
-          image,
-          category,
-        },
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
-      res.status(201).json({
-        message: "Cập nhật bài viết thành công !",
-        status: "success",
-      });
-    } else {
-      return next(appError("Bạn cần nhập đầy đủ thông tin bài viết !", 403));
-    }
+    );
+    res.status(201).json({
+      message: "Cập nhật phả nhân thành công !",
+      status: "success",
+    });
   } catch (error) {
     return next(appError(error.message, 500));
   }
@@ -149,9 +231,9 @@ const updatePeopleCtrl = async (req, res, next) => {
 
 const deletePeopleCtrl = async (req, res, next) => {
   try {
-    const People = await People.findByIdAndDelete(req.params.id);
+    const people = await People.findByIdAndDelete(req.params.id);
     res.status(201).json({
-      message: "Xóa bài viết thành công !",
+      message: "Xóa phả nhân thành công !",
       status: "success",
     });
   } catch (error) {
